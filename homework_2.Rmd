@@ -1,0 +1,50 @@
+---
+title: "Homework 2"
+author: "Mari Sanders"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(igraph)
+library(sand)
+library(tidyverse)
+```
+
+# Random Graph, varying p
+
+```{r}
+set.seed(1234)
+
+p_vals <- seq(0.01, 0.1, by = 0.01)
+nodes <- 100
+
+largest_component_size <- length(p_vals)
+num_components <- length(p_vals)
+
+for (i in seq_along(p_vals)) {
+  p <- p_vals[i]
+  g.er <- sample_gnp(nodes, p)
+  
+  components <- decompose(g.er)
+  component_size <- sapply(components, vcount)
+  
+  largest_component_size[i] <- max(component_size)
+  num_components[i] <- length(components)
+}
+
+par(mfrow = c(1, 2))
+
+plot(p_vals, largest_component_size, type = "b", col = "pink",
+     xlab = "Probability", ylab = "Size of Largest Component", 
+     main = "Largest Component Size and P")
+
+plot(p_vals, num_components, type = "b", col = "purple",
+     xlab = "Probability", ylab = "Number of Components", 
+     main = "Number of Components and P")
+```
+
+From these graphs, we can see that when p increases, the size of the largest component increases until it starts to level off at around p = 0.06. At the same time, as p increases, the number of components decreases and seems to level off at zero by 0.06.
+
+This makes sense because as the probability increases, the largest component size increases, which means that more nodes are being absorbed into the largest component, therefore decreasing the number of components. 
